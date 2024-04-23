@@ -1,6 +1,6 @@
 # Axelar ITS App
 
-Send tokens using the Interchain Token Service from Axelar.
+Transfer tokens using the Interchain Token Service from Axelar.
 
 ## Stack
 
