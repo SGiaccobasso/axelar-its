@@ -88,10 +88,12 @@ const TxCard: React.FC = () => {
   const onClickProceed = async () => {
     setIsLoadingTx(true);
     console.log("1", "account", account);
+    let gasfee = null;
     try {
       console.log("2", "nativeCurrencySymbol", nativeCurrencySymbol);
+      console.log("2", "sdk", sdk);
 
-      const gasfee =
+      gasfee =
         selectedToChain &&
         (await sdk.estimateGasFee(
           chainsData[chainid].nameID,
@@ -99,7 +101,12 @@ const TxCard: React.FC = () => {
           nativeCurrencySymbol
         ));
       console.log("3");
-
+    } catch (e: any) {
+      setIsLoadingTx(false);
+      setError("Failed to estimate gas fee.");
+      return;
+    }
+    try {
       const bnAmount = parseUnits(amountInputValue, 18);
       console.log("4");
 
