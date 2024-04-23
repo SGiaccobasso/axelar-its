@@ -54,7 +54,13 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
 
       <motion.div className="mt-4 flex w-full justify-end">
         <LoadingButton
-          onClick={() => onClickAction(interchainTokenAddress, symbol, tokenId)}
+          onClick={() =>
+            onClickAction(
+              interchainTokenAddress as string,
+              symbol as string,
+              tokenId
+            )
+          }
           disabled={isButtonDisabled}
         >
           NEXT
