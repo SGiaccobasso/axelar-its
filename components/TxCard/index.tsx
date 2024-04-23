@@ -1,36 +1,42 @@
 import { useEffect, useState } from "react";
-import { useAccount, useChainId, useSendTransaction } from "wagmi";
-import { parseEther } from "viem";
+import { useAccount, useWriteContract } from "wagmi";
 import { LayoutGroup, motion } from "framer-motion";
+import { parseUnits } from "viem";
 
-import { getDepositAddress } from "../../utils/axelar";
+import interchainTokenAbi from "../../utils/its";
 import { DropdownItem } from "../../types/types";
-import { getChain, getEnv, isNumericInput } from "../../utils/utils";
+import { isNumericInput } from "../../utils/utils";
 import LoadingStepContent from "./components/LoadingStep";
 import DisconnectedContent from "./components/DisconnectedStep";
 import SuccessContent from "./components/SuccessStep";
 import ErrorContent from "./components/ErrorStep";
 import CreateStepContent from "./components/CreateStep";
+import SelectTokenStep from "./components/SelectTokenStep";
 
 const TxCard: React.FC = () => {
-  const chain = useChainId();
   const [isLoadingTx, setIsLoadingTx] = useState(false);
-  const {
-    data: hash,
-    error: errorSendTransaction,
-    isPending: isPendingUserApproval,
-    reset: resetTx,
-    sendTransaction,
-  } = useSendTransaction();
   const [error, setError] = useState("");
   const [selectedToChain, setSelectedToChain] = useState<DropdownItem | null>(
     null
   );
-  const [selectedAsset, setSelectedAsset] = useState<DropdownItem | null>(null);
   const { isConnected } = useAccount();
   const [amountInputValue, setAmountInputValue] = useState<string>("0.1");
   const [destinationAddressValue, setDestinationAddressValue] =
     useState<string>("");
+  const {
+    data: hashWriteContract,
+    writeContract,
+    error: errorWrite,
+    isPending,
+    reset,
+  } = useWriteContract();
+  const [interchainTokenAddress, setInterchainTokenAddress] = useState("");
+  const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
+
+  const handleOnClickSelectToken = (address: string, symbol: string) => {
+    setInterchainTokenAddress(address);
+    setInterchainTokenSymbol(symbol);
+  };
 
   const handleAmountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -46,45 +52,60 @@ const TxCard: React.FC = () => {
   };
 
   useEffect(() => {
-    if (errorSendTransaction) {
+    if (errorWrite) {
       setIsLoadingTx(false);
-      setError(errorSendTransaction?.message.split("\n")[0]);
+      setError(errorWrite?.message);
     }
-    if (hash) setIsLoadingTx(false);
-  }, [errorSendTransaction, isPendingUserApproval]);
+    console.log("hashWriteContract", hashWriteContract);
+    if (hashWriteContract) setIsLoadingTx(false);
+  }, [errorWrite, isPending]);
 
   const onClickFinish = () => {
     setError("");
-    resetTx();
+    reset();
   };
 
   const onClickProceed = async () => {
     setIsLoadingTx(true);
-    const fromChain = getChain(chain);
-    const env = getEnv(chain);
     try {
-      const data = await getDepositAddress(
-        fromChain,
-        selectedToChain?.id,
-        destinationAddressValue,
-        selectedAsset?.id,
-        env
-      );
-      sendTransaction({
-        to: `0x${data.depositAddress.substring(2)}`,
-        value: parseEther(amountInputValue),
-      });
+      const abi = interchainTokenAbi;
+      const bnAmount = parseUnits(amountInputValue, 18);
+      selectedToChain &&
+        writeContract({
+          address: `0x${interchainTokenAddress.substring(2)}`,
+          abi,
+          functionName: "interchainTransfer",
+          args: [selectedToChain.name, destinationAddressValue, bnAmount, "0x"],
+        });
     } catch (e: any) {
       setIsLoadingTx(false);
       setError(e?.message);
     }
   };
 
+  const goBackToTokenSelection = () => setInterchainTokenAddress("");
+
   const disconnectedStep = !isConnected;
-  const createTxStep = isConnected && !isLoadingTx && !hash && !error;
-  const successStep = isConnected && !isLoadingTx && hash && !error;
-  const errorStateStep = isConnected && !!error;
-  const loadingStep = isConnected && isLoadingTx && !hash && !error;
+  const selectTokenStep = isConnected && !interchainTokenAddress;
+  const createTxStep =
+    isConnected &&
+    interchainTokenAddress &&
+    !isLoadingTx &&
+    !hashWriteContract &&
+    !error;
+  const successStep =
+    isConnected &&
+    interchainTokenAddress &&
+    !isLoadingTx &&
+    hashWriteContract &&
+    !error;
+  const errorStateStep = isConnected && interchainTokenAddress && !!error;
+  const loadingStep =
+    isConnected &&
+    interchainTokenAddress &&
+    isLoadingTx &&
+    !hashWriteContract &&
+    !error;
 
   return (
     <LayoutGroup>
@@ -96,13 +117,16 @@ const TxCard: React.FC = () => {
         {errorStateStep && (
           <ErrorContent error={error} onClickAction={onClickFinish} />
         )}
+        {selectTokenStep && (
+          <SelectTokenStep onClickAction={handleOnClickSelectToken} />
+        )}
         {createTxStep && (
           <CreateStepContent
+            goBack={goBackToTokenSelection}
+            tokenSymbol={interchainTokenSymbol}
             isLoadingTx={isLoadingTx}
             amountInputValue={amountInputValue}
             handleAmountInputChange={handleAmountInputChange}
-            setSelectedAsset={setSelectedAsset}
-            selectedAsset={selectedAsset}
             destinationAddressValue={destinationAddressValue}
             handleDestinationAddressChange={handleDestinationAddressChange}
             setSelectedToChain={setSelectedToChain}
@@ -111,9 +135,7 @@ const TxCard: React.FC = () => {
           />
         )}
         {loadingStep && (
-          <LoadingStepContent
-            isWaitingForUserApproval={isPendingUserApproval}
-          />
+          <LoadingStepContent isWaitingForUserApproval={isPending} />
         )}
         {disconnectedStep && <DisconnectedContent />}
       </motion.div>

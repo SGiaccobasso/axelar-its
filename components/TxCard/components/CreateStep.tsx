@@ -9,37 +9,36 @@ interface CreateStepContentProps {
   isLoadingTx: boolean;
   amountInputValue: string;
   handleAmountInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setSelectedAsset: React.Dispatch<React.SetStateAction<DropdownItem | null>>;
-  selectedAsset: DropdownItem | null;
   destinationAddressValue: string;
   handleDestinationAddressChange: (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
   setSelectedToChain: React.Dispatch<React.SetStateAction<DropdownItem | null>>;
   selectedToChain: DropdownItem | null;
+  tokenSymbol: string;
+  goBack: () => void;
 }
 const CreateStepContent: React.FC<CreateStepContentProps> = ({
   onClickAction,
   isLoadingTx,
   amountInputValue,
   handleAmountInputChange,
-  setSelectedAsset,
-  selectedAsset,
   destinationAddressValue,
   handleDestinationAddressChange,
   setSelectedToChain,
   selectedToChain,
+  tokenSymbol,
+  goBack,
 }) => {
   const isButtonDisabled =
     !destinationAddressValue ||
     !amountInputValue ||
     parseFloat(amountInputValue) <= 0 ||
-    !selectedToChain?.id ||
-    !selectedAsset?.id;
+    !selectedToChain?.id;
   return (
     <>
       <motion.div className="justify-center w-full flex text-xl text-blue-500">
-        CREATE TRANSACTION
+        TRANSFER {tokenSymbol}
       </motion.div>
       <label htmlFor="amount" className="mt-5 block font-medium text-white">
         Send:
@@ -56,13 +55,6 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
             placeholder="Enter amount"
             className="text-right font-medium w-full bg-gray-900 border border-gray-700 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500"
           />
-          <motion.div className="ml-4 mt-1">
-            <Dropdown
-              option="assets"
-              onSelectValue={setSelectedAsset}
-              value={selectedAsset}
-            />
-          </motion.div>
         </motion.div>
       </motion.div>
       <label
@@ -94,7 +86,9 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
         </motion.div>
       </motion.div>
 
-      <motion.div className="mt-10 flex w-full justify-end">
+      <motion.div className="mt-10 flex w-full justify-between">
+        <LoadingButton onClick={goBack}>&lt; Back</LoadingButton>
+
         <LoadingButton onClick={onClickAction} disabled={isButtonDisabled}>
           Send
         </LoadingButton>

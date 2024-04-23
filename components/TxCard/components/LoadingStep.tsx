@@ -1,4 +1,4 @@
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
 interface LoadingStepContentProps {
@@ -14,7 +14,7 @@ const LoadingStepContent = ({
         {isWaitingForUserApproval ? (
           <motion.p>SIGN TRANSACTION IN WALLET</motion.p>
         ) : (
-          <motion.p>GENERATING DEPOSIT ADDRESS...</motion.p>
+          <motion.p>LOADING...</motion.p>
         )}
       </AnimatePresence>
     </motion.div>
