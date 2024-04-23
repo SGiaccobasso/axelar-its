@@ -16,6 +16,7 @@ import chainsData from "../../chains/chains";
 
 const ITS_ADDRESS = "0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C";
 const ITS_TRANSFER_METHOD_NAME = "interchainTransfer";
+const gasLimit = 700000;
 
 const sdk = new AxelarQueryAPI({
   environment:
@@ -83,7 +84,6 @@ const TxCard: React.FC = () => {
   const onClickProceed = async () => {
     setIsLoadingTx(true);
     let gasfee = null;
-    const gasLimit = parseUnits("1", 18);
     try {
       gasfee =
         selectedToChain &&
