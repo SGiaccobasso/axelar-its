@@ -98,7 +98,7 @@ const TxCard: React.FC = () => {
         (await sdk.estimateGasFee(
           chainsData[chainid].nameID,
           chainsData[selectedToChain?.id].nameID,
-          nativeCurrencySymbol
+          "wsteth-wei"
         ));
       console.log("3");
     } catch (e: any) {
