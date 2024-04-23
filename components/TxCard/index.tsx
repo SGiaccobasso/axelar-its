@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccount, useChainId, useWriteContract } from "wagmi";
+import { useAccount, useBalance, useChainId, useWriteContract } from "wagmi";
 import { LayoutGroup, motion } from "framer-motion";
 import { parseUnits } from "viem";
 
@@ -46,6 +46,10 @@ const TxCard: React.FC = () => {
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
   const [interchainTokenID, setInterchainTokenID] = useState("");
   const chainid = useChainId();
+  const nativeCurrencySymbol =
+    useBalance({
+      address: useAccount().address,
+    }).data?.symbol.toLowerCase() || "eth";
 
   const handleOnClickSelectToken = (
     address: string,
@@ -83,6 +87,11 @@ const TxCard: React.FC = () => {
     reset();
   };
 
+  console.log(
+    "balance",
+    useBalance({ address: useAccount().address }).data?.symbol
+  );
+
   const onClickProceed = async () => {
     setIsLoadingTx(true);
     try {
@@ -91,7 +100,7 @@ const TxCard: React.FC = () => {
         (await sdk.estimateGasFee(
           chainsData[chainid].nameID,
           chainsData[selectedToChain?.id].nameID,
-          "eth"
+          nativeCurrencySymbol
         ));
       const bnAmount = parseUnits(amountInputValue, 18);
       selectedToChain &&
