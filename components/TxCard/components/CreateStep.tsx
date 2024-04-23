@@ -36,20 +36,21 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
   interchainTokenAddress,
 }) => {
   const account = useAccount();
+
   const { data: balance } = useReadContract({
     abi: tokenABI,
     address: `0x${(interchainTokenAddress as string)?.substring(2)}`,
     functionName: "balanceOf",
     args: [account.address],
   });
-  const balanceFormatted = balance
-    ? formatUnits(balance as BigNumberish)
-    : "loading...";
+
+  const balanceFormatted = formatUnits((balance as BigNumberish) || "0");
+
   const isValidAddress = () => isAddress(destinationAddressValue);
 
   const isValidAmount = () =>
     parseFloat(amountInputValue) > 0 &&
-    parseFloat(amountInputValue) < parseFloat(balanceFormatted);
+    parseFloat(amountInputValue) <= parseFloat(balanceFormatted);
 
   const isButtonDisabled =
     !destinationAddressValue ||
@@ -67,7 +68,7 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
         <motion.div className="flex justify-between w-full">
           <motion.p>Send {tokenSymbol}:</motion.p>
           <motion.p className="text-gray-400 text-xs pt-1">
-            Max: {balanceFormatted}
+            Max: {balance !== undefined ? balanceFormatted : "Loading..."}
           </motion.p>
         </motion.div>
       </label>
