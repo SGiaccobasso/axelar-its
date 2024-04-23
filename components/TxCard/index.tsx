@@ -87,7 +87,10 @@ const TxCard: React.FC = () => {
 
   const onClickProceed = async () => {
     setIsLoadingTx(true);
+    console.log("1");
     try {
+      console.log("2");
+
       const gasfee =
         selectedToChain &&
         (await sdk.estimateGasFee(
@@ -95,7 +98,11 @@ const TxCard: React.FC = () => {
           chainsData[selectedToChain?.id].nameID,
           nativeCurrencySymbol
         ));
+      console.log("3");
+
       const bnAmount = parseUnits(amountInputValue, 18);
+      console.log("4");
+
       selectedToChain &&
         writeContract({
           address: ITS_ADDRESS,
@@ -110,6 +117,7 @@ const TxCard: React.FC = () => {
             gasfee,
           ],
         });
+      console.log("5");
     } catch (e: any) {
       setIsLoadingTx(false);
       setError(e?.message);
