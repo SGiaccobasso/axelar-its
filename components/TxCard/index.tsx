@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccount, useBalance, useChainId, useWriteContract } from "wagmi";
+import { useAccount, useChainId, useWriteContract } from "wagmi";
 import { LayoutGroup, motion } from "framer-motion";
 import { Chain, parseUnits } from "viem";
 
@@ -43,11 +43,6 @@ const TxCard: React.FC = () => {
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
   const [interchainTokenID, setInterchainTokenID] = useState("");
   const chainid = useChainId();
-  const account = useAccount();
-  const nativeCurrencySymbol =
-    useBalance({
-      address: account.address,
-    }).data?.symbol.toLowerCase() || "eth";
 
   const handleOnClickSelectToken = (
     address: string,
@@ -87,20 +82,16 @@ const TxCard: React.FC = () => {
 
   const onClickProceed = async () => {
     setIsLoadingTx(true);
-    console.log("1", "account", account);
     let gasfee = null;
+    const gasLimit = parseUnits("1", 18);
     try {
-      console.log("2", "nativeCurrencySymbol", nativeCurrencySymbol);
-      console.log("2", "sdk", sdk.estimateGasFee);
-
       gasfee =
         selectedToChain &&
         (await sdk.estimateGasFee(
           chainsData[chainid].nameID,
           chainsData[selectedToChain?.id].nameID,
-          "wsteth-wei"
+          gasLimit
         ));
-      console.log("3");
     } catch (e: any) {
       console.error(e);
       setIsLoadingTx(false);
@@ -109,8 +100,6 @@ const TxCard: React.FC = () => {
     }
     try {
       const bnAmount = parseUnits(amountInputValue, 18);
-      console.log("4");
-
       selectedToChain &&
         writeContract({
           address: ITS_ADDRESS,
@@ -125,7 +114,6 @@ const TxCard: React.FC = () => {
             gasfee,
           ],
         });
-      console.log("5");
     } catch (e: any) {
       setIsLoadingTx(false);
       setError(e?.message);
