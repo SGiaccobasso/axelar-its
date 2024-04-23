@@ -56,7 +56,6 @@ const TxCard: React.FC = () => {
       setIsLoadingTx(false);
       setError(errorWrite?.message);
     }
-    console.log("hashWriteContract", hashWriteContract);
     if (hashWriteContract) setIsLoadingTx(false);
   }, [errorWrite, isPending]);
 
@@ -73,7 +72,7 @@ const TxCard: React.FC = () => {
       selectedToChain &&
         writeContract({
           address: `0x${interchainTokenAddress.substring(2)}`,
-          abi,
+          abi: abi,
           functionName: "interchainTransfer",
           args: [selectedToChain.name, destinationAddressValue, bnAmount, "0x"],
         });
@@ -113,7 +112,9 @@ const TxCard: React.FC = () => {
         layout
         className="p-6 bg-gray-900 rounded-lg shadow-md w-full max-w-sm border border-blue-600"
       >
-        {successStep && <SuccessContent onClickAction={onClickFinish} />}
+        {successStep && (
+          <SuccessContent onClickAction={onClickFinish} hash={hashWriteContract} />
+        )}
         {errorStateStep && (
           <ErrorContent error={error} onClickAction={onClickFinish} />
         )}
