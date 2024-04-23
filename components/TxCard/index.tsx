@@ -27,9 +27,7 @@ const sdk = new AxelarQueryAPI({
 const TxCard: React.FC = () => {
   const [isLoadingTx, setIsLoadingTx] = useState(false);
   const [error, setError] = useState("");
-  const [selectedToChain, setSelectedToChain] = useState<Chain | null>(
-    null
-  );
+  const [selectedToChain, setSelectedToChain] = useState<Chain | null>(null);
   const { isConnected } = useAccount();
   const [amountInputValue, setAmountInputValue] = useState<string>("0.1");
   const [destinationAddressValue, setDestinationAddressValue] =
@@ -45,9 +43,10 @@ const TxCard: React.FC = () => {
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
   const [interchainTokenID, setInterchainTokenID] = useState("");
   const chainid = useChainId();
+  const account = useAccount();
   const nativeCurrencySymbol =
     useBalance({
-      address: useAccount().address,
+      address: account.address,
     }).data?.symbol.toLowerCase() || "eth";
 
   const handleOnClickSelectToken = (
