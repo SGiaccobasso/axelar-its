@@ -14,7 +14,7 @@ const LoadingStepContent = ({
         {isWaitingForUserApproval ? (
           <motion.p>SIGN TRANSACTION IN WALLET</motion.p>
         ) : (
-          <motion.p>LOADING...</motion.p>
+          <motion.p>ESTIMATING FEES...</motion.p>
         )}
       </AnimatePresence>
     </motion.div>

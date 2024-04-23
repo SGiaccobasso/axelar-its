@@ -5,7 +5,7 @@ import { useState } from "react";
 import useTokenData from "../../../hooks/useTokenData";
 
 interface SelectTokenStepProps {
-  onClickAction: (address: string, symbol: string) => void;
+  onClickAction: (address: string, symbol: string, tokenID: string) => void;
 }
 
 const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
@@ -16,6 +16,7 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
     decimals,
     name,
     symbol,
+    isLoading,
   } = useTokenData(tokenId);
   const isButtonDisabled = !interchainTokenAddress;
 
@@ -56,8 +57,9 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
 
       <motion.div className="mt-4 flex w-full justify-end">
         <LoadingButton
-          onClick={() => onClickAction(interchainTokenAddress, symbol)}
+          onClick={() => onClickAction(interchainTokenAddress, symbol, tokenId)}
           disabled={isButtonDisabled}
+          isLoading={isLoading}
         >
           {symbol ? `USE ${symbol}` : "next"}
         </LoadingButton>

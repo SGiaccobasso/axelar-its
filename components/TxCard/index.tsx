@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useChainId, useWriteContract } from "wagmi";
 import { LayoutGroup, motion } from "framer-motion";
 import { parseUnits } from "viem";
 
-import interchainTokenAbi from "../../utils/its";
 import { DropdownItem } from "../../types/types";
 import { isNumericInput } from "../../utils/utils";
 import LoadingStepContent from "./components/LoadingStep";
@@ -12,6 +11,19 @@ import SuccessContent from "./components/SuccessStep";
 import ErrorContent from "./components/ErrorStep";
 import CreateStepContent from "./components/CreateStep";
 import SelectTokenStep from "./components/SelectTokenStep";
+import InterchainTokenService from "../../contract-abis/InterchainTokenService.abi.json";
+import { AxelarQueryAPI, Environment } from "@axelar-network/axelarjs-sdk";
+import chainsData from "../../chains/chains";
+
+const ITS_ADDRESS = "0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C";
+const ITS_TRANSFER_METHOD_NAME = "interchainTransfer";
+
+const sdk = new AxelarQueryAPI({
+  environment:
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      ? Environment.TESTNET
+      : Environment.MAINNET,
+});
 
 const TxCard: React.FC = () => {
   const [isLoadingTx, setIsLoadingTx] = useState(false);
@@ -32,10 +44,17 @@ const TxCard: React.FC = () => {
   } = useWriteContract();
   const [interchainTokenAddress, setInterchainTokenAddress] = useState("");
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
+  const [interchainTokenID, setInterchainTokenID] = useState("");
+  const chainid = useChainId();
 
-  const handleOnClickSelectToken = (address: string, symbol: string) => {
+  const handleOnClickSelectToken = (
+    address: string,
+    symbol: string,
+    tokenID: string
+  ) => {
     setInterchainTokenAddress(address);
     setInterchainTokenSymbol(symbol);
+    setInterchainTokenID(tokenID);
   };
 
   const handleAmountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,14 +86,27 @@ const TxCard: React.FC = () => {
   const onClickProceed = async () => {
     setIsLoadingTx(true);
     try {
-      const abi = interchainTokenAbi;
+      const gasfee =
+        selectedToChain &&
+        (await sdk.estimateGasFee(
+          chainsData[chainid].nameID,
+          chainsData[selectedToChain?.id].nameID,
+          "eth"
+        ));
       const bnAmount = parseUnits(amountInputValue, 18);
       selectedToChain &&
         writeContract({
-          address: `0x${interchainTokenAddress.substring(2)}`,
-          abi: abi,
-          functionName: "interchainTransfer",
-          args: [selectedToChain.name, destinationAddressValue, bnAmount, "0x"],
+          address: ITS_ADDRESS,
+          abi: InterchainTokenService,
+          functionName: ITS_TRANSFER_METHOD_NAME,
+          args: [
+            interchainTokenID,
+            chainsData[selectedToChain?.id].nameID,
+            destinationAddressValue,
+            bnAmount,
+            "0x",
+            gasfee,
+          ],
         });
     } catch (e: any) {
       setIsLoadingTx(false);
@@ -113,7 +145,10 @@ const TxCard: React.FC = () => {
         className="p-6 bg-gray-900 rounded-lg shadow-md w-full max-w-sm border border-blue-600"
       >
         {successStep && (
-          <SuccessContent onClickAction={onClickFinish} hash={hashWriteContract} />
+          <SuccessContent
+            onClickAction={onClickFinish}
+            hash={hashWriteContract}
+          />
         )}
         {errorStateStep && (
           <ErrorContent error={error} onClickAction={onClickFinish} />

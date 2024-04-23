@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { DropdownItem } from "../../types/types";
-import useAxelarData from "../../hooks/useAxelarData";
 import { motion, Variants } from "framer-motion";
 import LoadingSpinner from "../animations/LoadingSpinner";
 import Image from "next/image";
+import { useChains } from "wagmi";
+import { Chain } from "viem";
+import chainsData from "../../chains/chains";
 
 type Option = "chains" | "assets";
 
 interface DropdownProps {
   option: Option;
-  onSelectValue: (value: DropdownItem) => void;
-  value: DropdownItem | null;
+  onSelectValue: (value: Chain) => void;
+  value: Chain | null;
   showArrow?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
-  option,
   onSelectValue,
   value,
   showArrow = false,
@@ -23,7 +23,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownBtnRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { data: list, isLoading, error } = useAxelarData(option);
+  const chainsList = useChains();
 
   const itemVariants: Variants = {
     open: {
@@ -35,16 +35,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
   useEffect(() => {
-    if (!list?.length) {
-      onSelectValue({ name: "Destination Chain", image: "", id: "" });
-    } else {
-      onSelectValue(list[0]);
-    }
-  }, [list]);
+    onSelectValue(chainsList[0]);
+  }, [chainsList]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const handleItemClick = (item: DropdownItem) => {
+  const handleItemClick = (item: Chain) => {
     onSelectValue(item);
     setIsOpen(false);
   };
@@ -76,7 +72,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         onClick={toggleDropdown}
         className="w-11"
       >
-        {!isLoading && !error && value ? (
+        {value ? (
           <div
             className="flex font-semibold hover:scale-105"
             ref={dropdownBtnRef}
@@ -89,7 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               transition={{ duration: 0.3 }}
               style={{ originY: 0.5, originX: 0.5 }}
               className="w-11 h-11 p-1 rounded-full border-gray-700 border-2 focus:border-blue-500 hover:border-blue-500 transition-transform duration-100"
-              src={value.image}
+              src={`/logos/chains/${chainsData[value.id]?.image}`}
               alt="Selected user image"
             />
             {showArrow && (
@@ -150,34 +146,23 @@ const Dropdown: React.FC<DropdownProps> = ({
           className="h-48 py-2 overflow-y-auto text-gray-400 dark:text-gray-200 bg-gray-800 "
           style={{ pointerEvents: isOpen ? "auto" : "none" }}
         >
-          {list &&
-            list.map((item, i) => (
-              <motion.li key={item.name + i} variants={itemVariants}>
-                <div
-                  className="flex items-center px-4 py-2 hover:bg-black dark:hover:text-white cursor-pointer font-semibold"
-                  onClick={() => handleItemClick(item)}
-                >
-                  <Image
-                    className="mr-2 rounded-full h-6 w-6"
-                    src={item.image}
-                    height={26}
-                    width={26}
-                    onError={(e) => {
-                      if (e.currentTarget.src.includes(".svg"))
-                        e.currentTarget.src = item.image.replace(
-                          ".svg",
-                          ".png"
-                        );
-                      else {
-                        e.currentTarget.src = "/assets/icons/cross.svg";
-                      }
-                    }}
-                    alt={item.name}
-                  />
-                  <p className="text-sm">{item.name}</p>
-                </div>
-              </motion.li>
-            ))}
+          {chainsList.map((item, i) => (
+            <motion.li key={item.name + i} variants={itemVariants}>
+              <div
+                className="flex items-center px-4 py-2 hover:bg-black dark:hover:text-white cursor-pointer font-semibold"
+                onClick={() => handleItemClick(item)}
+              >
+                <Image
+                  className="mr-2 rounded-full h-6 w-6"
+                  src={`/logos/chains/${chainsData[item.id]?.image}`}
+                  height={26}
+                  width={26}
+                  alt={item.name}
+                />
+                <p className="text-sm">{item.name}</p>
+              </div>
+            </motion.li>
+          ))}
         </motion.ul>
       </motion.div>
     </motion.nav>
