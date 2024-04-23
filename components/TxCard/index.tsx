@@ -102,6 +102,7 @@ const TxCard: React.FC = () => {
         ));
       console.log("3");
     } catch (e: any) {
+      console.error(e);
       setIsLoadingTx(false);
       setError("Failed to estimate gas fee.");
       return;
