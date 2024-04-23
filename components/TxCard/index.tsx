@@ -87,9 +87,9 @@ const TxCard: React.FC = () => {
 
   const onClickProceed = async () => {
     setIsLoadingTx(true);
-    console.log("1");
+    console.log("1", "account", account);
     try {
-      console.log("2");
+      console.log("2", "nativeCurrencySymbol", nativeCurrencySymbol);
 
       const gasfee =
         selectedToChain &&
