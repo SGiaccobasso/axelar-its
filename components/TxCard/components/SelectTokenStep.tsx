@@ -12,11 +12,8 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
   const [tokenId, setTokenId] = useState<string>("");
   const {
     address: interchainTokenAddress,
-    error,
-    decimals,
     name,
     symbol,
-    isLoading,
   } = useTokenData(tokenId);
   const isButtonDisabled = !interchainTokenAddress;
 
@@ -59,9 +56,8 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
         <LoadingButton
           onClick={() => onClickAction(interchainTokenAddress, symbol, tokenId)}
           disabled={isButtonDisabled}
-          isLoading={isLoading}
         >
-          {symbol ? `USE ${symbol}` : "next"}
+          NEXT
         </LoadingButton>
       </motion.div>
     </>
