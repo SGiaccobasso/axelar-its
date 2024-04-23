@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAccount, useBalance, useChainId, useWriteContract } from "wagmi";
 import { LayoutGroup, motion } from "framer-motion";
-import { parseUnits } from "viem";
+import { Chain, parseUnits } from "viem";
 
-import { DropdownItem } from "../../types/types";
 import { isNumericInput } from "../../utils/utils";
 import LoadingStepContent from "./components/LoadingStep";
 import DisconnectedContent from "./components/DisconnectedStep";
@@ -28,7 +27,7 @@ const sdk = new AxelarQueryAPI({
 const TxCard: React.FC = () => {
   const [isLoadingTx, setIsLoadingTx] = useState(false);
   const [error, setError] = useState("");
-  const [selectedToChain, setSelectedToChain] = useState<DropdownItem | null>(
+  const [selectedToChain, setSelectedToChain] = useState<Chain | null>(
     null
   );
   const { isConnected } = useAccount();
