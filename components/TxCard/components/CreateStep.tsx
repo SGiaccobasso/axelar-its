@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 import LoadingButton from "../../common/LoadingButton";
 import Dropdown from "../../common/Dropdown";
-import { DropdownItem } from "../../../types/types";
+import { Chain } from "viem";
 
 interface CreateStepContentProps {
   onClickAction: () => void;
@@ -13,8 +13,8 @@ interface CreateStepContentProps {
   handleDestinationAddressChange: (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
-  setSelectedToChain: React.Dispatch<React.SetStateAction<DropdownItem | null>>;
-  selectedToChain: DropdownItem | null;
+  setSelectedToChain: React.Dispatch<React.SetStateAction<Chain | null>>;
+  selectedToChain: Chain | null;
   tokenSymbol: string;
   goBack: () => void;
 }

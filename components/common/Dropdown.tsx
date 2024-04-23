@@ -36,7 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   useEffect(() => {
     onSelectValue(chainsList[0]);
-  }, [chainsList]);
+  }, [chainsList, onSelectValue]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 

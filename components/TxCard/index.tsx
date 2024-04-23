@@ -80,7 +80,7 @@ const TxCard: React.FC = () => {
       setError(errorWrite?.message);
     }
     if (hashWriteContract) setIsLoadingTx(false);
-  }, [errorWrite, isPending]);
+  }, [errorWrite, isPending, hashWriteContract]);
 
   const onClickFinish = () => {
     setError("");
