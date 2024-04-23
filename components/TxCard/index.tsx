@@ -91,7 +91,7 @@ const TxCard: React.FC = () => {
     let gasfee = null;
     try {
       console.log("2", "nativeCurrencySymbol", nativeCurrencySymbol);
-      console.log("2", "sdk", sdk);
+      console.log("2", "sdk", sdk.estimateGasFee);
 
       gasfee =
         selectedToChain &&
