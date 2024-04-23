@@ -13,6 +13,6 @@ Send tokens using the Interchain Token Service from Axelar.
 - React Query
 - Viem
 
-## Deployment
+## Testnet Deployment
 
-The Axelar ITS application is deployed and accessible [here](https://axelar-its.vercel.app/).
+The Axelar ITS application (testnet) is deployed and accessible [here](https://axelar-its.vercel.app/).
