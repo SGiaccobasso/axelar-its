@@ -99,13 +99,13 @@ const chainsData: Record<
     isTestnet: true,
   },
   "5611": {
-    nameID: "opBNB Testnet",
+    nameID: "binance",
     name: "BNB",
     image: "binance.png",
     isTestnet: true,
   },
   "59140": {
-    nameID: "linea-goerli",
+    nameID: "linea",
     name: "Linea",
     image: "linea.svg",
     isTestnet: true,

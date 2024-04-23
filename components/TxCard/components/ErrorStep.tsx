@@ -18,7 +18,7 @@ const ErrorContent: React.FC<ErrorContentProps> = ({
       <motion.div className="text-red-500">SOMETHING WENT WRONG</motion.div>
     </motion.div>
     <motion.div key="error-desc" className="w-full my-8 px-2 text-red-500 max-h-32 overflow-scroll">
-      {error}
+      {error.split("\n")[0]}
     </motion.div>
     <motion.div key="err-loading-btn" className="mt-4 flex w-full justify-end">
       <LoadingButton onClick={onClickAction}>ok</LoadingButton>

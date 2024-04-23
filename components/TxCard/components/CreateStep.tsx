@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import LoadingButton from "../../common/LoadingButton";
 import Dropdown from "../../common/Dropdown";
 import { Chain } from "viem";
+import { BigNumberish, formatUnits, isAddress } from "ethers";
+import { useAccount, useReadContract } from "wagmi";
+import tokenABI from "../../../contract-abis/token.abi.json";
 
 interface CreateStepContentProps {
   onClickAction: () => void;
@@ -17,6 +20,7 @@ interface CreateStepContentProps {
   selectedToChain: Chain | null;
   tokenSymbol: string;
   goBack: () => void;
+  interchainTokenAddress: string;
 }
 const CreateStepContent: React.FC<CreateStepContentProps> = ({
   onClickAction,
@@ -29,20 +33,45 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
   selectedToChain,
   tokenSymbol,
   goBack,
+  interchainTokenAddress,
 }) => {
+  const account = useAccount();
+  const { data: balance } = useReadContract({
+    abi: tokenABI,
+    address: `0x${(interchainTokenAddress as string)?.substring(2)}`,
+    functionName: "balanceOf",
+    args: [account.address],
+  });
+  const balanceFormatted = balance
+    ? formatUnits(balance as BigNumberish)
+    : "loading...";
+  const isValidAddress = () => isAddress(destinationAddressValue);
+
+  const isValidAmount = () =>
+    parseFloat(amountInputValue) > 0 &&
+    parseFloat(amountInputValue) < parseFloat(balanceFormatted);
+
   const isButtonDisabled =
     !destinationAddressValue ||
     !amountInputValue ||
-    parseFloat(amountInputValue) <= 0 ||
-    !selectedToChain?.id;
+    !isValidAmount() ||
+    !isValidAddress();
+  !selectedToChain?.id;
+
   return (
     <>
       <motion.div className="justify-center w-full flex text-xl text-blue-500">
         TRANSFER {tokenSymbol}
       </motion.div>
       <label htmlFor="amount" className="mt-5 block font-medium text-white">
-        Send:
+        <motion.div className="flex justify-between w-full">
+          <motion.p>Send {tokenSymbol}:</motion.p>
+          <motion.p className="text-gray-400 text-xs pt-1">
+            Max: {balanceFormatted}
+          </motion.p>
+        </motion.div>
       </label>
+
       <motion.div className="mt-2 flex md:flex-row gap-4 items-center">
         <motion.div className="relative flex flex-grow">
           <input
@@ -53,7 +82,9 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
             onChange={handleAmountInputChange}
             id="amount"
             placeholder="Enter amount"
-            className="text-right font-medium w-full bg-gray-900 border border-gray-700 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500"
+            className={`text-right font-medium w-full bg-gray-900 border ${
+              isValidAmount() ? "border-gray-700" : "border-red-500"
+            } rounded-md py-2 px-4 focus:outline-none focus:border-blue-500`}
           />
         </motion.div>
       </motion.div>
@@ -73,7 +104,11 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
             placeholder="Enter destination address"
             autoCorrect="off"
             spellCheck="false"
-            className="h-24 text-right font-medium text-md text-white w-full bg-gray-900 border border-gray-700 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500"
+            className={`h-24 text-right font-medium w-full bg-gray-900 border ${
+              (destinationAddressValue ? isValidAddress() : true)
+                ? "border-gray-700"
+                : "border-red-500"
+            } rounded-md py-2 px-4 focus:outline-none focus:border-blue-500`}
             style={{ resize: "none" }}
           />
           <motion.div className="ml-4 mt-1">
@@ -85,7 +120,6 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
           </motion.div>
         </motion.div>
       </motion.div>
-
       <motion.div className="mt-10 flex w-full justify-between">
         <LoadingButton onClick={goBack}>&lt; Back</LoadingButton>
 

@@ -86,11 +86,6 @@ const TxCard: React.FC = () => {
     reset();
   };
 
-  console.log(
-    "balance",
-    useBalance({ address: useAccount().address }).data?.symbol
-  );
-
   const onClickProceed = async () => {
     setIsLoadingTx(true);
     try {
@@ -168,6 +163,7 @@ const TxCard: React.FC = () => {
           <CreateStepContent
             goBack={goBackToTokenSelection}
             tokenSymbol={interchainTokenSymbol}
+            interchainTokenAddress={interchainTokenAddress}
             isLoadingTx={isLoadingTx}
             amountInputValue={amountInputValue}
             handleAmountInputChange={handleAmountInputChange}
