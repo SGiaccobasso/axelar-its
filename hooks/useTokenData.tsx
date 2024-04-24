@@ -1,7 +1,10 @@
 import { erc20Abi } from "viem";
 import { useReadContract, useReadContracts } from "wagmi";
 import InterchainTokenService from "../contract-abis/InterchainTokenService.abi.json";
-import { INTERCHAIN_TOKEN_SERVICE_ADDRESS } from "../utils/constants";
+import {
+  INTERCHAIN_TOKEN_SERVICE_ADDRESS,
+  VALID_TOKEN_METHOD_NAME,
+} from "../utils/constants";
 
 const useTokenData = (tokenId: string) => {
   const {
@@ -11,7 +14,7 @@ const useTokenData = (tokenId: string) => {
   } = useReadContract({
     abi: InterchainTokenService,
     address: INTERCHAIN_TOKEN_SERVICE_ADDRESS,
-    functionName: "validTokenAddress",
+    functionName: VALID_TOKEN_METHOD_NAME,
     args: [tokenId],
   });
 

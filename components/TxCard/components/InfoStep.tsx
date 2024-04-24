@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 
 import LoadingButton from "../../common/LoadingButton";
+import { INTERCHAIN_DOCS_URL } from "../../../utils/constants";
 
 interface InfoStepProps {
   goBack: () => void;
 }
-const INTERCHAIN_DOCS_URL =
-  "https://docs.axelar.dev/dev/send-tokens/interchain-tokens";
+
 
 const InfoStep: React.FC<InfoStepProps> = ({ goBack }) => {
   return (
