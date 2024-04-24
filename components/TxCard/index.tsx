@@ -13,6 +13,7 @@ import SelectTokenStep from "./components/SelectTokenStep";
 import InterchainTokenService from "../../contract-abis/InterchainTokenService.abi.json";
 import { AxelarQueryAPI, Environment } from "@axelar-network/axelarjs-sdk";
 import chainsData from "../../chains/chains";
+import InfoStep from "./components/InfoStep";
 
 const ITS_ADDRESS = "0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C";
 const ITS_TRANSFER_METHOD_NAME = "interchainTransfer";
@@ -44,6 +45,7 @@ const TxCard: React.FC = () => {
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
   const [interchainTokenID, setInterchainTokenID] = useState("");
   const chainid = useChainId();
+  const [isInfoStep, setIsInfoStep] = useState(false);
 
   const handleOnClickSelectToken = (
     address: string,
@@ -123,21 +125,25 @@ const TxCard: React.FC = () => {
   const goBackToTokenSelection = () => setInterchainTokenAddress("");
 
   const disconnectedStep = !isConnected;
-  const selectTokenStep = isConnected && !interchainTokenAddress;
+  const selectTokenStep = isConnected && !isInfoStep && !interchainTokenAddress;
   const createTxStep =
+    !isInfoStep &&
     isConnected &&
     interchainTokenAddress &&
     !isLoadingTx &&
     !hashWriteContract &&
     !error;
   const successStep =
+    !isInfoStep &&
     isConnected &&
     interchainTokenAddress &&
     !isLoadingTx &&
     hashWriteContract &&
     !error;
-  const errorStateStep = isConnected && interchainTokenAddress && !!error;
+  const errorStateStep =
+    !isInfoStep && isConnected && interchainTokenAddress && !!error;
   const loadingStep =
+    !isInfoStep &&
     isConnected &&
     interchainTokenAddress &&
     isLoadingTx &&
@@ -150,6 +156,14 @@ const TxCard: React.FC = () => {
         layout
         className="p-6 bg-gray-900 rounded-lg shadow-md w-full max-w-sm border border-blue-600"
       >
+        {disconnectedStep && <DisconnectedContent />}
+        {isInfoStep && <InfoStep goBack={() => setIsInfoStep(false)} />}
+        {selectTokenStep && (
+          <SelectTokenStep
+            onClickInfo={() => setIsInfoStep(true)}
+            onClickAction={handleOnClickSelectToken}
+          />
+        )}
         {successStep && (
           <SuccessContent
             onClickAction={onClickFinish}
@@ -159,9 +173,7 @@ const TxCard: React.FC = () => {
         {errorStateStep && (
           <ErrorContent error={error} onClickAction={onClickFinish} />
         )}
-        {selectTokenStep && (
-          <SelectTokenStep onClickAction={handleOnClickSelectToken} />
-        )}
+
         {createTxStep && (
           <CreateStepContent
             goBack={goBackToTokenSelection}
@@ -175,12 +187,12 @@ const TxCard: React.FC = () => {
             setSelectedToChain={setSelectedToChain}
             selectedToChain={selectedToChain}
             onClickAction={onClickProceed}
+            onClickInfo={() => setIsInfoStep(true)}
           />
         )}
         {loadingStep && (
           <LoadingStepContent isWaitingForUserApproval={isPending} />
         )}
-        {disconnectedStep && <DisconnectedContent />}
       </motion.div>
     </LayoutGroup>
   );

@@ -21,6 +21,7 @@ interface CreateStepContentProps {
   tokenSymbol: string;
   goBack: () => void;
   interchainTokenAddress: string;
+  onClickInfo: () => void;
 }
 const CreateStepContent: React.FC<CreateStepContentProps> = ({
   onClickAction,
@@ -34,6 +35,7 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
   tokenSymbol,
   goBack,
   interchainTokenAddress,
+  onClickInfo,
 }) => {
   const account = useAccount();
 
@@ -61,8 +63,14 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
 
   return (
     <>
-      <motion.div className="justify-center w-full flex text-xl text-blue-500">
+      <motion.div className="justify-between w-full flex text-xl text-blue-500">
         TRANSFER {tokenSymbol}
+        <motion.div
+          onClick={onClickInfo}
+          className="mb-1 self-end border-2 text-blue-500 text-xs rounded-full border-blue-500 w-5 h-5 text-center transform hover:scale-110 transition-transform duration-100 cursor-pointer"
+        >
+          i
+        </motion.div>
       </motion.div>
       <label htmlFor="amount" className="mt-5 block font-medium text-white">
         <motion.div className="flex justify-between w-full">

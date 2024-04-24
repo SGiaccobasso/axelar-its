@@ -6,9 +6,13 @@ import useTokenData from "../../../hooks/useTokenData";
 
 interface SelectTokenStepProps {
   onClickAction: (address: string, symbol: string, tokenID: string) => void;
+  onClickInfo: () => void;
 }
 
-const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
+const SelectTokenStep: React.FC<SelectTokenStepProps> = ({
+  onClickAction,
+  onClickInfo,
+}) => {
   const [tokenId, setTokenId] = useState<string>("");
   const {
     address: interchainTokenAddress,
@@ -20,11 +24,16 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({ onClickAction }) => {
   const handleTokenIdChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTokenId(e.target.value);
   };
-  const selectedTokenTitleClasses = symbol ? "mt-4" : "mt-4 text-gray-600";
   return (
     <>
-      <motion.div className="justify-center w-full flex text-xl text-blue-500">
+      <motion.div className="justify-between w-full flex text-xl text-blue-500">
         SELECT TOKEN
+        <motion.div
+          onClick={onClickInfo}
+          className="mb-1 self-end border-2 text-blue-500 text-xs rounded-full border-blue-500 w-5 h-5 text-center transform hover:scale-110 transition-transform duration-100 cursor-pointer"
+        >
+          i
+        </motion.div>
       </motion.div>
       <label htmlFor="amount" className="mt-8 block font-medium text-white">
         <motion.div className="flex justify-between w-full">
