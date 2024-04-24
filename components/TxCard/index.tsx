@@ -12,6 +12,7 @@ import CreateStepContent from "./components/CreateStep";
 import SelectTokenStep from "./components/SelectTokenStep";
 import InfoStep from "./components/InfoStep";
 import useInterchainTransfer from "../../hooks/useInterchainTransfer";
+import WelcomeStep from "./components/WelcomeStep";
 
 const TxCard: React.FC = () => {
   const [selectedToChain, setSelectedToChain] = useState<Chain | null>(null);
@@ -24,6 +25,7 @@ const TxCard: React.FC = () => {
   const [isInfoStep, setIsInfoStep] = useState(false);
   const { error, isLoadingTx, isPending, sendTransfer, reset, hash } =
     useInterchainTransfer();
+  const [hasStartedFlow, setHasStartedFlow] = useState(false);
 
   const handleOnClickSelectToken = (
     address: string,
@@ -44,7 +46,11 @@ const TxCard: React.FC = () => {
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => setDestinationAddressValue(e.target.value);
 
-  const onClickFinish = () => reset();
+  const onClickFinish = () => {
+    reset();
+    setHasStartedFlow(false);
+    setInterchainTokenAddress("");
+  };
 
   const onClickProceed = async () =>
     selectedToChain &&
@@ -62,13 +68,15 @@ const TxCard: React.FC = () => {
       <DisconnectedContent />
     ) : isInfoStep ? (
       <InfoStep goBack={() => setIsInfoStep(false)} />
+    ) : !hasStartedFlow ? (
+      <WelcomeStep onClickAction={setHasStartedFlow} />
     ) : !interchainTokenAddress ? (
       <SelectTokenStep
         onClickInfo={() => setIsInfoStep(true)}
         onClickAction={handleOnClickSelectToken}
       />
     ) : error ? (
-      <ErrorStep error={error} onClickAction={onClickFinish} />
+      <ErrorStep error={error} onClickAction={() => reset()} />
     ) : hash ? (
       <SuccessStep onClickAction={onClickFinish} hash={hash} />
     ) : isLoadingTx ? (

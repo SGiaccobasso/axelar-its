@@ -27,7 +27,7 @@ const SuccessContent: React.FC<SuccessContentProps> = ({
           href={`${getAxelarscanBaseURL()}gmp/${hash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="pt-4 text-gray-400 text-xs hover:scale-105 transition-transform duration-100"
+          className="pt-4 text-blue-400 text-xs hover:scale-105 transition-transform duration-100"
         >
           Check it on Axelarscan
         </motion.a>
