@@ -5,11 +5,11 @@ import { AxelarQueryAPI, Environment } from "@axelar-network/axelarjs-sdk";
 
 import chainsData from "../chains/chains";
 import InterchainTokenService from "../contract-abis/InterchainTokenService.abi.json";
-
-// Constants
-const ITS_ADDRESS = "0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C";
-const ITS_TRANSFER_METHOD_NAME = "interchainTransfer";
-const gasLimit = 700000;
+import {
+  GAS_LIMIT,
+  INTERCHAIN_TOKEN_SERVICE_ADDRESS,
+  ITS_TRANSFER_METHOD_NAME,
+} from "../utils/constants";
 
 const sdk = new AxelarQueryAPI({
   environment:
@@ -57,7 +57,7 @@ const useInterchainTransfer = () => {
         (await sdk.estimateGasFee(
           chainsData[chainid].nameID,
           chainsData[selectedToChain?.id].nameID,
-          gasLimit
+          GAS_LIMIT
         ));
     } catch (e: any) {
       console.error(e);
@@ -69,7 +69,7 @@ const useInterchainTransfer = () => {
       const bnAmount = parseUnits(amountInputValue, 18);
       selectedToChain &&
         writeContract({
-          address: ITS_ADDRESS,
+          address: INTERCHAIN_TOKEN_SERVICE_ADDRESS,
           abi: InterchainTokenService,
           functionName: ITS_TRANSFER_METHOD_NAME,
           args: [
