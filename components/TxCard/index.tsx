@@ -50,6 +50,8 @@ const TxCard: React.FC = () => {
     reset();
     setHasStartedFlow(false);
     setInterchainTokenAddress("");
+    setDestinationAddressValue("")
+    setAmountInputValue("0.1")
   };
 
   const onClickProceed = async () =>
