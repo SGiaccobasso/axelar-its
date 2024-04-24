@@ -57,7 +57,7 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({
         placeholder="Enter Interchain Token ID"
         autoCorrect="off"
         spellCheck="false"
-        className={`my-2 h-24 text-right font-medium text-md text-white w-full bg-gray-900 border ${
+        className={`my-2 h-24 font-medium text-md text-white w-full bg-gray-900 border ${
           name ? "border-green-500" : "border-gray-700"
         } rounded-md py-2 px-4 focus:outline-none focus:border-blue-500`}
         style={{ resize: "none" }}

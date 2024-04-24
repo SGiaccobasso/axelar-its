@@ -113,7 +113,7 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
             placeholder="Enter destination address"
             autoCorrect="off"
             spellCheck="false"
-            className={`h-24 text-right font-medium w-full bg-gray-900 border ${
+            className={`h-24 font-medium w-full bg-gray-900 border ${
               (destinationAddressValue ? isValidAddress() : true)
                 ? "border-gray-700"
                 : "border-red-500"
