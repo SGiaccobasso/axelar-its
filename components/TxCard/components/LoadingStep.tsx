@@ -2,16 +2,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
 interface LoadingStepContentProps {
-  isWaitingForUserApproval: boolean;
+  isWaitingForApproval: boolean;
 }
 
 const LoadingStepContent = ({
-  isWaitingForUserApproval,
+  isWaitingForApproval,
 }: LoadingStepContentProps) => (
   <>
     <motion.div className="justify-center w-full flex text-xl text-center text-blue-500 mb-2">
       <AnimatePresence>
-        {isWaitingForUserApproval ? (
+        {isWaitingForApproval ? (
           <motion.p>SIGN TRANSACTION IN WALLET</motion.p>
         ) : (
           <motion.p>ESTIMATING FEES...</motion.p>

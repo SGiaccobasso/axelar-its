@@ -4,10 +4,10 @@ import { LayoutGroup, motion } from "framer-motion";
 import { Chain } from "viem";
 
 import { isNumericInput } from "../../utils/utils";
-import LoadingStepContent from "./components/LoadingStep";
+import LoadingStep from "./components/LoadingStep";
 import DisconnectedContent from "./components/DisconnectedStep";
-import SuccessContent from "./components/SuccessStep";
-import ErrorContent from "./components/ErrorStep";
+import SuccessStep from "./components/SuccessStep";
+import ErrorStep from "./components/ErrorStep";
 import CreateStepContent from "./components/CreateStep";
 import SelectTokenStep from "./components/SelectTokenStep";
 import InfoStep from "./components/InfoStep";
@@ -16,9 +16,8 @@ import useInterchainTransfer from "../../hooks/useInterchainTransfer";
 const TxCard: React.FC = () => {
   const [selectedToChain, setSelectedToChain] = useState<Chain | null>(null);
   const { isConnected } = useAccount();
-  const [amountInputValue, setAmountInputValue] = useState<string>("0.1");
-  const [destinationAddressValue, setDestinationAddressValue] =
-    useState<string>("");
+  const [amountInputValue, setAmountInputValue] = useState("0.1");
+  const [destinationAddressValue, setDestinationAddressValue] = useState("");
   const [interchainTokenAddress, setInterchainTokenAddress] = useState("");
   const [interchainTokenSymbol, setInterchainTokenSymbol] = useState("");
   const [interchainTokenID, setInterchainTokenID] = useState("");
@@ -36,11 +35,10 @@ const TxCard: React.FC = () => {
     setInterchainTokenID(tokenID);
   };
 
-  const handleAmountInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (isNumericInput(inputValue) || inputValue === "")
-      setAmountInputValue(inputValue);
-  };
+  const handleAmountInputChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLInputElement>) =>
+    (isNumericInput(value) || value === "") && setAmountInputValue(value);
 
   const handleDestinationAddressChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -59,23 +57,23 @@ const TxCard: React.FC = () => {
 
   const goBackToTokenSelection = () => setInterchainTokenAddress("");
 
-  const getStep = () => {
-    if (!isConnected) return <DisconnectedContent />;
-    if (isInfoStep) return <InfoStep goBack={() => setIsInfoStep(false)} />;
-    if (!interchainTokenAddress)
-      return (
-        <SelectTokenStep
-          onClickInfo={() => setIsInfoStep(true)}
-          onClickAction={handleOnClickSelectToken}
-        />
-      );
-    if (error)
-      return <ErrorContent error={error} onClickAction={onClickFinish} />;
-    if (hash)
-      return <SuccessContent onClickAction={onClickFinish} hash={hash} />;
-    if (isLoadingTx)
-      return <LoadingStepContent isWaitingForUserApproval={isPending} />;
-    return (
+  const getStepComponent = () =>
+    !isConnected ? (
+      <DisconnectedContent />
+    ) : isInfoStep ? (
+      <InfoStep goBack={() => setIsInfoStep(false)} />
+    ) : !interchainTokenAddress ? (
+      <SelectTokenStep
+        onClickInfo={() => setIsInfoStep(true)}
+        onClickAction={handleOnClickSelectToken}
+      />
+    ) : error ? (
+      <ErrorStep error={error} onClickAction={onClickFinish} />
+    ) : hash ? (
+      <SuccessStep onClickAction={onClickFinish} hash={hash} />
+    ) : isLoadingTx ? (
+      <LoadingStep isWaitingForApproval={isPending} />
+    ) : (
       <CreateStepContent
         goBack={goBackToTokenSelection}
         tokenSymbol={interchainTokenSymbol}
@@ -91,7 +89,6 @@ const TxCard: React.FC = () => {
         onClickInfo={() => setIsInfoStep(true)}
       />
     );
-  };
 
   return (
     <LayoutGroup>
@@ -99,7 +96,7 @@ const TxCard: React.FC = () => {
         layout
         className="p-6 bg-gray-900 rounded-lg shadow-md w-full max-w-sm border border-blue-600"
       >
-        {getStep()}
+        {getStepComponent()}
       </motion.div>
     </LayoutGroup>
   );
