@@ -16,7 +16,7 @@ const WelcomeStep = ({ onClickAction }: WelcomeStepProps) => {
         <AnimatePresence>
           <motion.p className="text-gray-300">WELCOME&nbsp;</motion.p>
           <motion.p className="text-blue-400">
-            {truncateEthAddress(address)}
+            {address && truncateEthAddress(address)}
           </motion.p>
           <motion.p className="text-gray-300">!</motion.p>
         </AnimatePresence>
