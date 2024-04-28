@@ -63,7 +63,7 @@ const CreateStepContent: React.FC<CreateStepContentProps> = ({
 
   return (
     <>
-      <motion.div className="justify-between w-full flex text-xl text-blue-500">
+      <motion.div className="justify-between w-full flex text-xl text-blue-400">
         TRANSFER {tokenSymbol}
         <motion.div
           onClick={onClickInfo}

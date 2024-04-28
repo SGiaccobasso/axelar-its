@@ -4,7 +4,7 @@ import { CustomConnectBtn } from "../../common/CustomConnectBtn";
 
 const DisconnectedContent: React.FC = () => (
   <>
-    <motion.div className="justify-center w-full flex text-xl text-blue-500 sm:hidden">
+    <motion.div className="justify-center w-full flex text-xl text-blue-400 sm:hidden">
       AXELAR ITS
     </motion.div>
     <motion.div className="flex w-full items-center justify-center flex-col">

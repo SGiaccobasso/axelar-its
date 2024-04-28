@@ -26,11 +26,11 @@ const SelectTokenStep: React.FC<SelectTokenStepProps> = ({
   };
   return (
     <>
-      <motion.div className="justify-between w-full flex text-xl text-blue-500">
+      <motion.div className="justify-between w-full flex text-xl text-blue-400">
         SELECT TOKEN
         <motion.div
           onClick={onClickInfo}
-          className="mb-1 self-end border-2 text-blue-500 text-xs rounded-full border-blue-500 w-5 h-5 text-center transform hover:scale-110 transition-transform duration-100 cursor-pointer"
+          className="mb-1 self-end border-2 text-blue-500 text-xs rounded-full border-blue-400 w-5 h-5 text-center transform hover:scale-110 transition-transform duration-100 cursor-pointer"
         >
           i
         </motion.div>

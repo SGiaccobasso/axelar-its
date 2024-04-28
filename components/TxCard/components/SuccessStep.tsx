@@ -1,7 +1,8 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useSpring } from "framer-motion";
 
 import LoadingButton from "../../common/LoadingButton";
 import { getAxelarscanBaseURL } from "../../../utils/utils";
+import { useEffect } from "react";
 
 interface SuccessContentProps {
   onClickAction: () => void;
@@ -16,6 +17,8 @@ const SuccessContent: React.FC<SuccessContentProps> = ({
     <motion.div className="w-full flex flex-col text-green-400 pt-4 break-all items-center">
       <motion.img
         className="my-4"
+        animate={{ scale: [0, 1] }}
+        transition={{ type: "spring", duration: 1, bounce: 0.3, stiffness: 300 }}
         height={100}
         width={100}
         src="/assets/icons/check.svg"
@@ -36,4 +39,5 @@ const SuccessContent: React.FC<SuccessContentProps> = ({
     </motion.div>
   </AnimatePresence>
 );
+
 export default SuccessContent;

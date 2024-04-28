@@ -9,7 +9,7 @@ const LoadingStepContent = ({
   isWaitingForApproval,
 }: LoadingStepContentProps) => (
   <>
-    <motion.div className="justify-center w-full flex text-xl text-center text-blue-500 mb-2">
+    <motion.div className="justify-center w-full flex text-xl text-center text-blue-400 mb-2">
       <AnimatePresence>
         {isWaitingForApproval ? (
           <motion.p>SIGN TRANSACTION IN WALLET</motion.p>
